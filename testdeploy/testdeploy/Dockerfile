@@ -1,28 +1,24 @@
-# Use the official .NET SDK image to build the application
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER app
+WORKDIR /app
+EXPOSE 8080
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["testdeploy/testdeploy.csproj", "testdeploy/"]
+RUN dotnet restore "./testdeploy/testdeploy.csproj"
+COPY . .
+WORKDIR "/src/testdeploy"
+RUN dotnet build "./testdeploy.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Set the working directory
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./testdeploy.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
 WORKDIR /app
-
-# Copy the project files and restore dependencies
-COPY testdeploy/testdeploy/*.csproj ./testdeploy/testdeploy/
-RUN dotnet restore ./testdeploy/testdeploy/testdeploy.csproj
-
-# Copy the rest of the files and build the project
-COPY . ./
-RUN dotnet build ./testdeploy/testdeploy/testdeploy.csproj -c Release -o /app/build
-
-# Publish the application
-RUN dotnet publish ./testdeploy/testdeploy/testdeploy.csproj -c Release -o /app/publish
-
-# Use the official .NET runtime image for the final stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the published files from the build stage
-COPY --from=build /app/publish .
-
-# Define the entry point of the application
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "testdeploy.dll"]
