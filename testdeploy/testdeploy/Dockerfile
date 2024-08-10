@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Adjust the path if necessary
-COPY ["testdeploy/testdeploy.csproj", "testdeploy/"]
+COPY ["testdeploy/testdeploy/testdeploy.csproj", "testdeploy/"]
 
 # Restore and build
 RUN dotnet restore "testdeploy/testdeploy.csproj"
