@@ -6,7 +6,7 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["testdeploy/testdeploy.csproj", "testdeploy/"]
+COPY ["testdeploy/testdeploy/testdeploy.csproj", "testdeploy/"]
 RUN dotnet restore "testdeploy/testdeploy.csproj"
 COPY testdeploy/ testdeploy/
 WORKDIR "/src/testdeploy"
