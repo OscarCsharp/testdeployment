@@ -14,11 +14,11 @@ RUN dotnet build "testdeploy.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "testdeploy.csproj" -c $BUILD_CONFIGURATION -o /var/lib/jenkins/dot-net-agent/workspace/testdeploy /p:UseAppHost=false
+RUN dotnet publish "testdeploy.csproj" -c $BUILD_CONFIGURATION -o /var/lib/jenkins/dot-net-agent/workspace /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /var/lib/jenkins/dot-net-agent/workspace/testdeploy .
+COPY --from=publish /var/lib/jenkins/dot-net-agent/workspace .
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s \
   CMD curl --fail http://localhost:8080/health || exit 1
 ENTRYPOINT ["dotnet", "testdeploy.dll"]
