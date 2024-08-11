@@ -1,19 +1,27 @@
+# Use the .NET runtime image as a base for the final stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /src
+WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+# Use the .NET SDK image for building the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["testdeploy.csproj","."]
-RUN dotnet restore "./testdeploy.csproj"
-COPY .. /
-WORKDIR "/src/testdeploy"
-RUN dotnet build "testdeploy.csproj" -c Release -o /app/build
 
+# Copy the project file and restore dependencies
+COPY testdeploy.csproj ./
+RUN dotnet restore
+
+# Copy the rest of the application code and build the project
+COPY . ./
+WORKDIR /src
+RUN dotnet build -c Release -o /app/build
+
+# Publish the application
 FROM build AS publish
-RUN dotnet publish "testdeploy.csproj" -c Release  -o /app/publish /p:UseAppHost=false
+RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
 
+# Final stage to create the runtime image
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
