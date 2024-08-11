@@ -10,12 +10,12 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copy the project file and restore dependencies
-COPY testdeploy/testdeploy/testdeploy.csproj testdeploy/
+COPY testdeploy/testdeploy.csproj testdeploy/
 RUN dotnet restore testdeploy/testdeploy.csproj
 
 # Copy the rest of the project files
 COPY testdeploy/   testdeploy/
-WORKDIR /src/
+WORKDIR /src/testdeploy
 
 # Build the application
 RUN dotnet build testdeploy.csproj -c $BUILD_CONFIGURATION -o /app/build
