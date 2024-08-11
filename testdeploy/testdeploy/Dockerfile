@@ -1,8 +1,8 @@
 # Use the .NET runtime image as a base for the final stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 5004
-
+EXPOSE 80
+EXPOSE 443
 
 # Use the .NET SDK image for building the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
