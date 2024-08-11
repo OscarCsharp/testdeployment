@@ -9,7 +9,7 @@ WORKDIR /src
 COPY ["testdeploy/testdeploy.csproj","testdeploy"]
 
 RUN dotnet restore "testdeploy/testdeploy.csproj"
-COPY .. 
+COPY ..  testdeploy/
 WORKDIR /src/testdeploy
 RUN dotnet build testdeploy.csproj -c $BUILD_CONFIGURATION -o /app/build
 
