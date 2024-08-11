@@ -11,7 +11,7 @@ WORKDIR /src
 
 # Copy the project file and restore dependencies
 COPY testdeploy.csproj testdeploy/
-RUN dotnet restore testdeploy.csproj
+RUN dotnet restore testdeploy/testdeploy.csproj
 
 # Copy the rest of the project files
 COPY testdeploy/   testdeploy/
