@@ -14,7 +14,7 @@ COPY testdeploy.csproj testdeploy/
 RUN dotnet restore testdeploy/testdeploy.csproj
 
 # Copy the rest of the project files
-COPY testdeploy/ testdeploy/
+COPY testdeploy/   /
 WORKDIR /src
 
 # Build the application
